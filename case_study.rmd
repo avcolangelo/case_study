@@ -3,6 +3,8 @@ title: "Case Study"
 author: "Alexis"
 date: "10/10/2019"
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -27,6 +29,56 @@ scale_fill_discrete = scale_fill_viridis_d
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
-## do data science!
 
+```{r}
+library(p8105.datasets)
+data("nyc_airbnb")
+nyc_airbnb %>% view
+```
 
+## let's answer some questions
+some cleaning
+```{r}
+nyc_airbnb =
+  nyc_airbnb %>%
+  mutate(
+    stars = review_scores_location / 2,
+    borough = neighbourhood_group
+  )
+```
+
+```{r}
+nyc_airbnb %>%
+  group_by(borough) %>%
+  summarize(med_price = median(price, na.rm = TRUE))
+```
+
+```{r}
+nyc_airbnb %>%
+  group_by(borough, room_type) %>%
+  summarize(med_price = median(price, na.rm = TRUE))
+```
+
+```{r}
+nyc_airbnb %>%
+  group_by(borough, room_type) %>%
+  summarize(med_price = median(price, na.rm = TRUE)) %>%
+  pivot_wider(
+    names_from = room_type,
+    values_from = med_price
+  )
+```
+
+```{r}
+nyc_airbnb %>%
+  filter(borough == "Staten Island", room_type == "Shared room") %>% view
+```
+
+```{r}
+nyc_airbnb %>%
+  count(borough, room_type) %>%
+  pivot_wider(
+    names_from = room_type,
+    values_from = n
+  )
+```
